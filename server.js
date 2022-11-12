@@ -6,11 +6,22 @@ const cors = require("cors");
 
 const app = express();
 
-// CORS needed if this AP is called from an app running on localhost. 
-var corsOptions = {
-  origin: process.env.CORS_ORIGIN
-};
-app.use(cors(corsOptions));
+// Set CORS access.
+let CORS_ALLOW_ALL = process.env.CORS_ALLOW_ALL == undefined ? true : (process.env.CORS_ALLOW_ALL.toLowerCase() === 'true');
+if (CORS_ALLOW_ALL) {
+  app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+  });
+} else {
+  var corsOptions = {
+    origin: process.env.CORS_ORIGIN
+  };
+  app.use(cors(corsOptions));
+}
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
