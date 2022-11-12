@@ -22,7 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const db = require("./app/models");
 const Role = db.role;
 
-
 if (process.env.NODE_ENV == 'Dev') {
   // force: true will drop the table if it already exists
   db.sequelize.sync({ force: true }).then(() => {
@@ -35,7 +34,7 @@ if (process.env.NODE_ENV == 'Dev') {
 
 // simple route
 app.get("/", (req, res) => {
-  res.send("Iltae's Node.js + Express + PostgresQL authenticate API");
+  res.send("Node.js + Express + PostgresQL + Sequelize authenticate API using JWT");
 });
 
 // routes

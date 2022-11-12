@@ -2,15 +2,29 @@ const config = require("../config/db.config.js");
 
 const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize(
-  config.DB,
-  config.USER,
-  config.PASSWORD,
-  {
-    host: config.HOST,
-    dialect: config.dialect
-  }
-);
+let sequelize = null;
+if (process.env.DB == 'localhost') {
+  sequelize = new Sequelize(
+    config.localhost.DB,
+    config.localhost.USER,
+    config.localhost.PASSWORD,
+    {
+      host: config.localhost.HOST,
+      dialect: config.localhost.dialect
+    }
+  );
+} else {
+  sequelize = new Sequelize(
+    config.external.DB,
+    config.external.USER,
+    config.external.PASSWORD,
+    {
+      host: config.external.HOST,
+      dialect: config.external.dialect
+    }
+  );
+}
+
 
 sequelize.authenticate().then(() => {
   console.log(`Postgres connected`)
