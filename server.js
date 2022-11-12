@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // Can make .env variables used by process.env.
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -6,10 +6,10 @@ const cors = require("cors");
 
 const app = express();
 
+// CORS needed if this AP is called from an app running on localhost. 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: process.env.CORS_ORIGIN
 };
-
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json

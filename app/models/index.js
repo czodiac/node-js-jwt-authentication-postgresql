@@ -1,7 +1,7 @@
 const config = require("../config/db.config.js");
-
 const Sequelize = require("sequelize");
 
+// Connect to PostegreSQL DB
 let sequelize = null;
 if (process.env.DB == 'localhost') {
   sequelize = new Sequelize(
@@ -25,7 +25,7 @@ if (process.env.DB == 'localhost') {
   );
 }
 
-
+// Check if DB is connected.
 sequelize.authenticate().then(() => {
   console.log(`Postgres connected`)
 }).catch((err) => {
@@ -33,13 +33,10 @@ sequelize.authenticate().then(() => {
 })
 
 const db = {};
-
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.role = require("../models/role.model.js")(sequelize, Sequelize);
-
 db.role.belongsToMany(db.user, {
   through: "user_roles",
   foreignKey: "roleId",
@@ -50,7 +47,6 @@ db.user.belongsToMany(db.role, {
   foreignKey: "userId",
   otherKey: "roleId"
 });
-
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;
