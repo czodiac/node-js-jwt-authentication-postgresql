@@ -1,7 +1,7 @@
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
-
+const CuteUser = db.cuteUser;
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
@@ -78,6 +78,67 @@ exports.signin = (req, res) => {
           roles: authorities,
           accessToken: token
         });
+      });
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.cuteSignup = (req, res) => {
+  CuteUser.create({
+    email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 8),
+    countryId: req.body.countryId,
+    stateId: req.body.stateId,
+    cityId: req.body.cityId,
+    roleId: req.body.roleId,
+    isMale: req.body.isMale
+  })
+    .then(() => {
+      res.send({ message: "User registered." });
+    })
+    .catch(err => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.cuteSignin = (req, res) => {
+  CuteUser.findOne({
+    where: {
+      email: req.body.email
+    }
+  })
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({ message: "User not found." });
+      }
+
+      var passwordIsValid = bcrypt.compareSync(
+        req.body.password,
+        user.password
+      );
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Invalid Password."
+        });
+      }
+
+      var token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
+        expiresIn: process.env.JWT_EXPIRE_TIME_In_SEC
+      });
+
+      res.status(200).send({
+        id: user.id,
+        email: user.email,
+        countryId: user.countryId,
+        stateId: user.stateId,
+        cityId: user.cityId,
+        roleId: user.roleId,
+        isMale: user.isMale,
+        accessToken: token
       });
     })
     .catch(err => {

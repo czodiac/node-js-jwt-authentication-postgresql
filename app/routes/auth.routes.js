@@ -10,6 +10,7 @@ module.exports = function (app) {
     next();
   });
 
+  // For KioStart
   app.post(
     "/api/auth/signup",
     [
@@ -20,4 +21,16 @@ module.exports = function (app) {
   );
 
   app.post("/api/auth/signin", controller.signin);
+
+  // For Cute Fishes
+  app.post(
+    "/auth/signup",
+    [
+      verifySignUp.checkDuplicateEmail,
+      verifySignUp.checkRolesExisted
+    ],
+    controller.cuteSignup
+  );
+
+  app.post("/auth/signin", controller.cuteSignin);
 };

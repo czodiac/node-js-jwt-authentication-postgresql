@@ -35,8 +35,35 @@ sequelize.authenticate().then(() => {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.user = require("../models/user.model.js")(sequelize, Sequelize);
+
+// For Cute Fishes
+db.cuteUser = require("../models/cuteUser.model.js")(sequelize, Sequelize);
+db.cuteCity = require("../models/cuteCity.model.js")(sequelize, Sequelize);
+db.cuteCountry = require("../models/cuteCountry.model.js")(sequelize, Sequelize);
+db.cuteState = require("../models/cuteState.model.js")(sequelize, Sequelize);
+db.cuteRole = require("../models/cuteRole.model.js")(sequelize, Sequelize);
+db.cuteUser.belongsTo(db.cuteRole, {
+  foreignKey: "roleId",
+});
+db.cuteUser.belongsTo(db.cuteCity, {
+  foreignKey: "cityId",
+});
+db.cuteUser.belongsTo(db.cuteState, {
+  foreignKey: "stateId",
+});
+db.cuteUser.belongsTo(db.cuteCountry, {
+  foreignKey: "countryId",
+});
+db.cuteState.belongsTo(db.cuteCountry, {
+  foreignKey: "countryId",
+});
+db.cuteCity.belongsTo(db.cuteState, {
+  foreignKey: "stateId",
+});
+
+// For KioStart
 db.role = require("../models/role.model.js")(sequelize, Sequelize);
+db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.role.belongsToMany(db.user, {
   through: "user_roles",
   foreignKey: "roleId",
@@ -47,6 +74,7 @@ db.user.belongsToMany(db.role, {
   foreignKey: "userId",
   otherKey: "roleId"
 });
+
 db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;
